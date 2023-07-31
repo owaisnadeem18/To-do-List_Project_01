@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ToDoList from "./Components/ToDoList";
+import Swal from "sweetalert2";
 
 export default function App() {
   const [inputList, setInputList] = useState("");
@@ -9,17 +10,26 @@ export default function App() {
     setInputList(event.target.value);
   };
 
-  const ItemList = () => {
-    setItems((oldItems) => {
-      return [...oldItems, inputList];
-    });
-    setInputList(""); // Reset the input field to an empty string after adding the item};
+  // const ItemList = () => {
+  //   setItems((oldItems) => {
+  //     return [...oldItems, inputList];
+  //   });
+  //   setInputList(""); // Reset the input field to an empty string after adding the item};
+  // };
+  const AddItem = () => {
+    if (inputList.trim() !== "") {
+      const newTodo = {
+        id: Date.now(),
+        text: inputList.trim(),
+      };
+      setItems([...Items, newTodo]);
+      setInputList("");
+    } else {
+      Swal.fire("Please Enter an Item");
+    }
   };
-
-  const DeletedItems = (id) => {
-    Items.filter((item) => {
-      setItems(item.id !== id);
-    });
+  const DeletItems = (id) => {
+    setItems(Items.filter((todo) => todo.id !== id));
   };
   return (
     <div className="main-div">
@@ -34,19 +44,8 @@ export default function App() {
           value={inputList}
           className="add-items"
         />
-        <button onClick={ItemList}> + </button>
-        <ol>
-          {Items.map((itemval, index) => {
-            return (
-              <ToDoList
-                key={index}
-                text={itemval}
-                DeletedItems={DeletedItems}
-                data={Items}
-              />
-            );
-          })}
-        </ol>
+        <button onClick={AddItem}> + </button>
+        <ToDoList list={Items} deleteTodo={DeletItems} />
       </div>
     </div>
   );
